@@ -7,8 +7,13 @@ import (
 )
 
 /*
-shardredis.Load(fd)
-cluster := shardredis.Get("redis-profile-b")
+Usage 1:
+pool := shardredis.RedisPool("localhost:6379")
+conn := pool.Get()
+defer conn.Close()
+
+Usage 2:
+cluster := shardredis.Cluster("redis-profile-b")
 rd := cluster.Get("100422")
 reply, err := rd.Do("SET", "name", "latermoon")
 rd.Close()
