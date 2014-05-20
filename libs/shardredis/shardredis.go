@@ -1,7 +1,7 @@
 package shardredis
 
 import (
-	"github.com/latermoon/redigo/redis"
+	"GoRedis/libs/redigo/redis"
 	"sync"
 	"time"
 )

@@ -2,8 +2,8 @@ package shardredis
 
 import (
 	. "GoRedis/goredis"
+	"GoRedis/libs/redigo/redis"
 	"fmt"
-	"github.com/latermoon/redigo/redis"
 	"strings"
 	"time"
 )
