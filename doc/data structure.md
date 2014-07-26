@@ -21,14 +21,5 @@
 		_z[user_rank]s#-2#100422 = ""
 		_z[user_rank]s#1#100423 = ""
 		_z[user_rank]s#2#300000 = ""
-
-	table
-		+[users]table = "idx:[momoid,regtime]"
-		_t[users]rows = "100"
-		_t[users]id#00001 = {momoid:"100422", age:12, sex:"M", regtime:1397801227}
-		_t[users]idx#momoid#100422 = "00001"
-		_t[users]idx#regtime#1397801227 = "00001"
-
-### TABLE
-
-	table_exec users "select * from users where momoid='100422'"
+	doc
+		+[users]doc = {momoid:"100422", age:12, sex:"M", regtime:1397801227}
