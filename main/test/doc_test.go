@@ -5,7 +5,7 @@ import (
 )
 
 /*
-Bad Command:
+test case:
 docset mydoc '{"$incr":{"name":1}}'
 docset mydoc '{"$incr":{"version":1}}'
 docset mydoc '{"$incr":{"version":"ok"}}'
@@ -15,6 +15,8 @@ docset mydoc '{"$rpush":[1,2]}'
 docset mydoc '{"$rpush":{"ok":1}}'
 docset mydoc '{"$rpush":{"ok":[1, 3]}}'
 docset mydoc '{"$rpush":{"name":["a.jpg"]}}'
+
+docset user:100422:profile '{"sex.a":3}'
 */
 
 func TestDoc(t *testing.T) {
@@ -35,11 +37,11 @@ func TestDoc(t *testing.T) {
 		t.Error("bad reply")
 	}
 
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"name":1}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
+	// if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"name":1}}`); err != nil {
+	// 	t.Fatal(err)
+	// } else if reply.(string) != "OK" {
+	// 	t.Error("bad reply")
+	// }
 
 	if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"version":1}}`); err != nil {
 		t.Fatal(err)

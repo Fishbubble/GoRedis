@@ -36,6 +36,7 @@ docget(key, "name,sex,photos,setting.mute,version")
 import (
 	. "GoRedis/goredis"
 	"encoding/json"
+	"fmt"
 	"strings"
 )
 
@@ -55,7 +56,7 @@ func (server *GoRedisServer) OnDOCSET(cmd *Command) (reply *Reply) {
 	jsonObj := make(map[string]interface{})
 	err = json.Unmarshal(jsonbytes, &jsonObj)
 	if err != nil {
-		return ErrorReply(err)
+		return ErrorReply(fmt.Sprintf("bad json format: %s", err))
 	}
 	// 调用LevelDocument更新数据
 	doc := server.levelRedis.GetDoc(key)

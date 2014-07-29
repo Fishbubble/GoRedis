@@ -72,6 +72,9 @@ var cmdrules = map[string][]interface{}{
 	"ZREMRANGEBYSCORE": []interface{}{4, 4},
 	"ZINCRBY":          []interface{}{4, 4},
 	"ZSCORE":           []interface{}{3, 3},
+	// doc
+	"DOCSET": []interface{}{3, 3},
+	"DOCGET": []interface{}{2, 3},
 	// server
 	"CLIENT": []interface{}{2, 2},
 	"AOF":    []interface{}{2, 2},

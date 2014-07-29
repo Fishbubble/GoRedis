@@ -123,14 +123,15 @@ func (m *MapDoc) Get(fields ...string) (out map[string]interface{}) {
 			if !ok {
 				break
 			}
-			if i > 0 && i == count-1 {
+			// 定位到最后一个元素
+			if i == count-1 {
 				dst[curkey] = obj
-				continue
+				break
 			}
+			// 没到最后一个元素，但原始数据不是map[string]interface{}，表示出错
 			if reflect.TypeOf(obj) != msitype {
-				// 基础类型
-				dst[curkey] = obj
-				continue
+				delete(dst, curkey)
+				break
 			}
 			if dst[curkey] == nil {
 				dst[curkey] = make(map[string]interface{})
