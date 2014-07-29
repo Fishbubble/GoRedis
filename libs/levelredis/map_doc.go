@@ -67,9 +67,15 @@ func (m *MapDoc) Set(in map[string]interface{}) (err error) {
 				parent[key] = value
 			}
 		case "rpush":
-			argmap := v.(map[string]interface{})
+			argmap, ok := v.(map[string]interface{})
+			if !ok {
+				return errors.New("bad rpush format")
+			}
 			for field, value := range argmap {
 				parent, key, _, _ := m.findElement(field, true)
+				if _, ok := value.([]interface{}); !ok {
+					return errors.New("bad rpush items format")
+				}
 				m.doRpush(parent, key, value.([]interface{}))
 			}
 		case "incr":
@@ -183,9 +189,13 @@ func (m *MapDoc) doIncr(parent map[string]interface{}, key string, value interfa
 		parent[key] = value
 	} else {
 		oldint, e1 := toInt(obj)
+		if e1 != nil {
+			return errors.New(fmt.Sprintf("`%s` is not `int`", key))
+		}
+
 		incrint, e2 := toInt(value)
-		if e1 != nil || e2 != nil {
-			return BadArgumentType
+		if e2 != nil {
+			return errors.New(fmt.Sprintf("incrment of `%s` is not `int`", key))
 		}
 		parent[key] = oldint + incrint
 	}

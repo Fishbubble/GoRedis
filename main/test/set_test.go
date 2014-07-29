@@ -24,7 +24,7 @@ func TestSet(t *testing.T) {
 
 	if reply, err := conn.Do("SADD", "members", "B", "C", "D"); err != nil {
 		t.Fatal(err)
-	} else if reply.(int64) != 2 {
+	} else if reply.(int64) != 3 { // 这里没有判断是否存在
 		t.Error("bad reply")
 	}
 

@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/latermoon/redigo/redis"
+	"GoRedis/libs/redigo/redis"
 	"testing"
 	"time"
 )

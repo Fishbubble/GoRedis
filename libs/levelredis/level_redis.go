@@ -282,6 +282,8 @@ func (l *LevelRedis) GetElem(key string, typ string) (e LevelElem) {
 		return l.GetSet(key)
 	case ZSET_SUFFIX:
 		return l.GetSortedSet(key)
+	case DOC_SUFFIX:
+		return l.GetDoc(key)
 	default:
 		e = nil
 	}
