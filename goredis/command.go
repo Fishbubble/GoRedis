@@ -50,7 +50,7 @@ func (cmd *Command) StringAtIndex(i int) string {
 
 func (cmd *Command) ArgAtIndex(i int) (arg []byte, err error) {
 	if i >= cmd.Len() {
-		err = errors.New(fmt.Sprintf("out of range %d/%d", i, cmd.Len()))
+		err = errors.New(fmt.Sprintf("index out of range %d/%d", i, cmd.Len()))
 		return
 	}
 	arg = cmd.args[i]
@@ -75,7 +75,7 @@ func (cmd *Command) Int64AtIndex(i int) (n int64, err error) {
 
 func (cmd *Command) FloatAtIndex(i int) (n float64, err error) {
 	if i >= cmd.Len() {
-		err = errors.New(fmt.Sprintf("out of range %d/%d", i, cmd.Len()))
+		err = errors.New(fmt.Sprintf("index out of range %d/%d", i, cmd.Len()))
 		return
 	}
 	n, err = strconv.ParseFloat(string(cmd.args[i]), 64)
