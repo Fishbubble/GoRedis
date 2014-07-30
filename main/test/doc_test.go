@@ -31,28 +31,33 @@ func TestDoc(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"name":"latermoon"}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
+	lines := []string{
+		`{"name":"latermoon"}`,
+		`{"$incr":{"version":1}}`,
+		`{"$incr":{"version":2}}`,
+		`{"$rpush":{"photos":["a.jpg", "b.jpg"]}}`,
+		`{"$rpush":{"photos":["c.jpg"]}}`,
+		`{"setting.mute":{"start":22, "end":7, "status":true}}`,
+		`{"setting.mute.start":23}`,
+		`{"$del":["setting.mute.start"]}`}
+
+	for _, line := range lines {
+		if reply, err := conn.Do("DOCSET", "mydoc", line); err != nil {
+			t.Fatal(err)
+		} else if reply.(string) != "OK" {
+			t.Error("bad reply")
+		}
 	}
 
-	// if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"name":1}}`); err != nil {
-	// 	t.Fatal(err)
-	// } else if reply.(string) != "OK" {
-	// 	t.Error("bad reply")
-	// }
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"version":1}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
+	badcommands := []string{
+		`{"name":"latermoon"`,  // bad json format
+		`{"$incr":{"name":1}}`, // `name` is not int
 	}
 
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$incr":{"version":2}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
+	for _, line := range badcommands {
+		if _, err := conn.Do("DOCSET", "mydoc", line); err == nil { // must be error
+			t.Error("no error is error")
+		}
 	}
 
 	if reply, err := conn.Do("DOCGET", "mydoc", `version`); err != nil {
@@ -60,37 +65,6 @@ func TestDoc(t *testing.T) {
 	} else if string(reply.([]byte)) != `{"version":3}` {
 		t.Error("bad reply")
 	}
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$rpush":{"photos":["a.jpg", "b.jpg"]}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$rpush":{"photos":["c.jpg"]}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"setting.mute":{"start":22, "end":7, "status":true}}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"setting.mute.start":23}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
-
-	if reply, err := conn.Do("DOCSET", "mydoc", `{"$del":["setting.mute.start"]}`); err != nil {
-		t.Fatal(err)
-	} else if reply.(string) != "OK" {
-		t.Error("bad reply")
-	}
-
 	if reply, err := conn.Do("DOCGET", "mydoc"); err != nil {
 		t.Fatal(err)
 	} else {
