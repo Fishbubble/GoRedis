@@ -43,7 +43,7 @@ func TestDoc(t *testing.T) {
 
 	for _, line := range lines {
 		if reply, err := conn.Do("DOCSET", "mydoc", line); err != nil {
-			t.Fatal(err)
+			t.Fatal(line, err)
 		} else if reply.(string) != "OK" {
 			t.Error("bad reply")
 		}

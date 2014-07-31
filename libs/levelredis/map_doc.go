@@ -14,7 +14,6 @@ var (
 	BadArgumentCount = errors.New("bad argument count")
 	BadArgumentType  = errors.New("bad argument type")
 	msitype          = reflect.TypeOf(make(map[string]interface{}))
-	miitype          = reflect.TypeOf(make(map[interface{}]interface{}))
 )
 
 const (
@@ -43,18 +42,33 @@ func (m *MapDoc) Set(in map[string]interface{}) (err error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	defer func() {
-		if v := recover(); v != nil {
-			if e, ok := v.(error); ok {
-				err = e
-			} else {
-				err = errors.New(fmt.Sprint(v))
-			}
-		}
-	}()
+	// defer func() {
+	// 	if v := recover(); v != nil {
+	// 		if e, ok := v.(error); ok {
+	// 			err = e
+	// 		} else {
+	// 			err = errors.New(fmt.Sprint(v))
+	// 		}
+	// 	}
+	// }()
 	for k, v := range in {
 		if !strings.HasPrefix(k, "$") {
-			parent, key, _, _ := m.findElement(k, true)
+			parent, key, val, exist := m.findEntry(k, false)
+			fmt.Println(parent, key, val, exist)
+			// 检查是否可覆盖
+			if exist {
+				// 如果原数据是复合结构，则新数据必须同类型
+				if m.isComplexType(val) && reflect.TypeOf(val).Kind() != reflect.TypeOf(v).Kind() {
+					return errors.New("bad value type for `" + k + "`")
+				}
+				// 如果原数据是简单数据类型，则新数据不能是复杂结构
+				if !m.isComplexType(val) && m.isComplexType(v) {
+					return errors.New("bad value type for `" + k + "`")
+				}
+			} else {
+				// 创建父对象
+				parent, key, _, _ = m.findEntry(k, true)
+			}
 			parent[key] = v
 			continue
 		}
@@ -96,6 +110,15 @@ func (m *MapDoc) Set(in map[string]interface{}) (err error) {
 		}
 	}
 	return
+}
+
+// 是否json中的数组或对象
+func (m *MapDoc) isComplexType(val interface{}) (ok bool) {
+	if val == nil {
+		return false
+	}
+	kind := reflect.TypeOf(val).Kind()
+	return kind == reflect.Slice || kind == reflect.Map
 }
 
 // doc_get(key, ["name", "setting.mute", "photos.$1"])
@@ -140,6 +163,28 @@ func (m *MapDoc) Get(fields ...string) (out map[string]interface{}) {
 			dst = dst[curkey].(map[string]interface{})
 		}
 	}
+	return
+}
+
+func (m *MapDoc) findEntry(field string, create bool) (parent map[string]interface{}, key string, val interface{}, exist bool) {
+	pairs := strings.Split(field, dot)
+	parent = m.data
+	for i := 0; i < len(pairs)-1; i++ {
+		curkey := pairs[i]
+		obj, ok := parent[curkey]
+		if !ok || reflect.TypeOf(obj) != msitype {
+			if create {
+				parent[curkey] = make(map[string]interface{})
+			} else {
+				return nil, "", nil, false // bye
+			}
+		}
+		parent = parent[curkey].(map[string]interface{})
+	}
+	exist = true
+	// 定位最后的元素
+	key = pairs[len(pairs)-1]
+	val = parent[key]
 	return
 }
 
