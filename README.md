@@ -1,7 +1,7 @@
-GoRedis
+GoRedis Book
 =======
 
-*请注意：GoRedis处于beta阶段，为陌陌公司内部测试，请保持关注，等待1.0发布*
+*请注意：GoRedis处于beta阶段，为陌陌公司内部测试，请保持关注，等待1.1稳定版发布*
 
 ### RedisServer Implemented by Go
 #### 说明
@@ -17,12 +17,11 @@ GoRedis
 
 #### Install:
 	先安装rocksdb，复制代码，编译GoRedis
-	git clone github.com/latermoon/GoRedis
+	git clone github.com/momotech/GoRedis
 	sh install.sh
 	sh build.sh
 
 #### Run:
 	cd /home/server/goredis/bin/
 	./goredis-server -procs 8 -p 1602
-
 
