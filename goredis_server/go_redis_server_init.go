@@ -97,14 +97,16 @@ func (server *GoRedisServer) initSlaveOf() {
 // 初始化leveldb
 func (server *GoRedisServer) initLevelDB() (err error) {
 	opts := levelredis.NewOptions()
-	cache := levelredis.NewLRUCache(128 * 1024 * 1024)
+	cache := levelredis.NewLRUCache(128 * 1024 * 1024) // 128M
 	opts.SetCache(cache)
 	opts.SetCompression(levelredis.SnappyCompression)
 	opts.SetBlockSize(8 * 1024)
 	opts.SetMaxBackgroundCompactions(6)
-	opts.SetWriteBufferSize(32 * 1024 * 1024)
+	opts.SetWriteBufferSize(32 * 1024 * 1024) // 32M
 	opts.SetMaxOpenFiles(100000)
 	opts.SetCreateIfMissing(true)
+	opts.SetMaxLogFileSize(100 * 1024 * 1024) // 100M
+	opts.SetKeepLogFileNum(5)
 	env := levelredis.NewDefaultEnv()
 	env.SetBackgroundThreads(6)
 	env.SetHighPriorityBackgroundThreads(2)
@@ -134,6 +136,8 @@ func (server *GoRedisServer) initSyncLog() error {
 	opts.SetWriteBufferSize(32 * 1024 * 1024)
 	opts.SetMaxOpenFiles(100000)
 	opts.SetCreateIfMissing(true)
+	opts.SetMaxLogFileSize(100 * 1024 * 1024) // 100M
+	opts.SetKeepLogFileNum(5)
 	env := levelredis.NewDefaultEnv()
 	env.SetBackgroundThreads(2)
 	env.SetHighPriorityBackgroundThreads(1)
