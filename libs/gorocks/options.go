@@ -1,6 +1,6 @@
 package gorocks
 
-// #cgo LDFLAGS: -lrocksdb
+// #cgo LDFLAGS: -lrocksdb -lsnappy -lgflags
 // #include "rocksdb/c.h"
 import "C"
 
