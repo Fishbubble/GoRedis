@@ -8,6 +8,47 @@ import (
 	"unsafe"
 )
 
+/* DB */
+/*
+extern rocksdb_t* rocksdb_open_column_families(
+    const rocksdb_options_t* options,
+    const char* name,
+    int num_column_families,
+    const char** column_family_names,
+    const rocksdb_options_t** column_family_options,
+    rocksdb_column_family_handle_t** column_family_handles,
+    char** errptr);
+*/
+func (db *DB) OpenColumnFamilies(dbname string, cfnames []string, cfopts []*Options, cfs []*ColumnFamilyHandle) error {
+	// C.rocksdb_open_column_families()
+	return nil
+}
+
+func (db *DB) CreateColumnFamily(name string, o *Options) error {
+	// C.rocksdb_create_column_family(db.Ldb)
+	return nil
+}
+
+func (db *DB) DropColumnFamily(cf *ColumnFamilyHandle) error {
+	var errStr *C.char
+	C.rocksdb_drop_column_family(db.Ldb, cf, &errStr)
+	if errStr != nil {
+		gs := C.GoString(errStr)
+		C.free(unsafe.Pointer(errStr))
+		return DatabaseError(gs)
+	}
+	return nil
+}
+
+/* ColumnFamilyHandle */
+type ColumnFamilyHandle struct {
+	cf *C.rocksdb_column_family_handle_t
+}
+
+func (c *ColumnFamilyHandle) Destory() {
+	C.rocksdb_column_family_handle_destroy(c.cf)
+}
+
 /* Options */
 
 // This specifies the absolute dir path for write-ahead logs (WAL).
