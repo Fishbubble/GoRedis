@@ -19,19 +19,54 @@ extern rocksdb_t* rocksdb_open_column_families(
     rocksdb_column_family_handle_t** column_family_handles,
     char** errptr);
 */
-func (db *DB) OpenColumnFamilies(dbname string, cfnames []string, cfopts []*Options, cfs []*ColumnFamilyHandle) error {
-	// C.rocksdb_open_column_families()
-	return nil
+func OpenColumnFamilies(dbname string, o *Options, cfnames []string, cfopts []*Options, cfhandles []*ColumnFamilyHandle) (*DB, error) {
+	ldbname := C.CString(dbname)
+	defer C.free(unsafe.Pointer(ldbname))
+
+	num := len(cfnames)
+	ptrcfnames := make([]*C.char, num)
+	ptrcfopts := make([]*C.rocksdb_options_t, num)
+	ptrcfhandles := make([]*C.rocksdb_column_family_handle_t, num)
+
+	for i := 0; i < num; i++ {
+		ptrcfnames[i] = C.CString(cfnames[i])
+		ptrcfopts[i] = cfopts[i].Opt
+		ptrcfhandles[i] = cfhandles[i].cf
+	}
+
+	defer func() {
+		for i := 0; i < num; i++ {
+			C.free(unsafe.Pointer(ptrcfnames[i]))
+		}
+	}()
+
+	var errStr *C.char
+	rocksdb := C.rocksdb_open_column_families(o.Opt, ldbname, C.int(num), &ptrcfnames[0], &ptrcfopts[0], &ptrcfhandles[0], &errStr)
+	if errStr != nil {
+		gs := C.GoString(errStr)
+		C.free(unsafe.Pointer(errStr))
+		return nil, DatabaseError(gs)
+	}
+
+	return &DB{rocksdb}, nil
 }
 
 func (db *DB) CreateColumnFamily(name string, o *Options) error {
-	// C.rocksdb_create_column_family(db.Ldb)
+	lname := C.CString(name)
+	defer C.free(unsafe.Pointer(lname))
+	var errStr *C.char
+	C.rocksdb_create_column_family(db.Ldb, o.Opt, lname, &errStr)
+	if errStr != nil {
+		gs := C.GoString(errStr)
+		C.free(unsafe.Pointer(errStr))
+		return DatabaseError(gs)
+	}
 	return nil
 }
 
 func (db *DB) DropColumnFamily(cf *ColumnFamilyHandle) error {
 	var errStr *C.char
-	C.rocksdb_drop_column_family(db.Ldb, cf, &errStr)
+	C.rocksdb_drop_column_family(db.Ldb, cf.cf, &errStr)
 	if errStr != nil {
 		gs := C.GoString(errStr)
 		C.free(unsafe.Pointer(errStr))
