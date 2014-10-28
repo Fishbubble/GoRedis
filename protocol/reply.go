@@ -4,8 +4,11 @@ import (
 	"bytes"
 )
 
+type Reply interface {
+	Bytes() []byte
+}
+
 // Redis Replies
-type Reply interface{}
 type StatusReply string
 type ErrorReply string
 type IntegerReply int

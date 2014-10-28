@@ -5,7 +5,28 @@ import (
 	"fmt"
 )
 
+type RedisServer struct {
+	RedisHandler
+}
+
+func (r *RedisServer) On(session Session, cmd Command) (Reply, error) {
+	return StatusReply("PONG"), nil
+}
+
 func main() {
+	startServer()
+}
+
+func startServer() {
+	fmt.Println("start ...")
+	s := &RedisServer{}
+	err := ListenAndServe(":3001", s)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func cmd() {
 	cmd := Command{[]byte("SET"), []byte("name"), []byte("latermoon")}
 	fmt.Println(cmd)
 
