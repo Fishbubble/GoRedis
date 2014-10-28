@@ -10,7 +10,7 @@ type RedisServer struct {
 }
 
 func (r *RedisServer) On(session Session, cmd Command) (Reply, error) {
-	return StatusReply("PONG"), nil
+	return StatusReply("OK"), nil
 }
 
 func main() {

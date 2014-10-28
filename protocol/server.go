@@ -9,7 +9,7 @@ type RedisHandler interface {
 	// SessionOpened(session Session)
 	// SessionClosed(session Session, err error)
 	On(session Session, cmd Command) (Reply, error)
-	// ExceptionCaught(err error)
+	ExceptionCaught(err error)
 }
 
 func ListenAndServe(addr string, handler RedisHandler) error {
