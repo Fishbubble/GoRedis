@@ -7,7 +7,8 @@ import (
 // 包装一组Counter，比提供简化的获取函数
 type Counters struct {
 	table map[string]*Counter
-	mu    sync.Mutex
+	//mu    sync.Mutex
+	mu sync.RWMutex
 }
 
 func NewCounters() (c *Counters) {
@@ -24,7 +25,9 @@ func (c *Counters) Len() int {
 // 获取并自动创建
 func (c *Counters) Get(name string) (counter *Counter) {
 	var ok bool
+	c.mu.RLock()
 	counter, ok = c.table[name]
+	c.mu.RUnlock()
 	if !ok {
 		c.mu.Lock()
 		counter, ok = c.table[name]
@@ -38,8 +41,8 @@ func (c *Counters) Get(name string) (counter *Counter) {
 }
 
 func (c *Counters) Names() (names []string) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
 	names = make([]string, 0, len(c.table))
 	for key, _ := range c.table {

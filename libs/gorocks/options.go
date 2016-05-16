@@ -100,7 +100,7 @@ func (o *Options) SetErrorIfExists(error_if_exists bool) {
 //
 // This is usually wise to use. See also ReadOptions.SetFillCache.
 func (o *Options) SetCache(cache *Cache) {
-	C.rocksdb_options_set_cache(o.Opt, cache.Cache)
+	// C.rocksdb_options_set_cache(o.Opt, cache.Cache)
 }
 
 // SetEnv sets the Env object for the new database handle.
@@ -151,7 +151,7 @@ func (o *Options) SetMaxOpenFiles(n int) {
 // The default is roughly 4096 uncompressed bytes. A better setting depends on
 // your use case. See the LevelDB documentation for details.
 func (o *Options) SetBlockSize(s int) {
-	C.rocksdb_options_set_block_size(o.Opt, C.size_t(s))
+	// C.rocksdb_options_set_block_size(o.Opt, C.size_t(s))
 }
 
 // SetBlockRestartInterval is the number of keys between restarts points for
@@ -160,7 +160,7 @@ func (o *Options) SetBlockSize(s int) {
 // Most clients should leave this parameter alone. See the LevelDB
 // documentation for details.
 func (o *Options) SetBlockRestartInterval(n int) {
-	C.rocksdb_options_set_block_restart_interval(o.Opt, C.int(n))
+	// C.rocksdb_options_set_block_restart_interval(o.Opt, C.int(n))
 }
 
 // SetCompression sets whether to compress blocks using the specified
@@ -184,11 +184,11 @@ func (o *Options) SetCreateIfMissing(b bool) {
 // SetFilterPolicy causes Open to create a new database that will uses filter
 // created from the filter policy passed in.
 func (o *Options) SetFilterPolicy(fp *FilterPolicy) {
-	var policy *C.rocksdb_filterpolicy_t
-	if fp != nil {
-		policy = fp.Policy
-	}
-	C.rocksdb_options_set_filter_policy(o.Opt, policy)
+	// var policy *C.rocksdb_filterpolicy_t
+	// if fp != nil {
+	// 	policy = fp.Policy
+	// }
+	// C.rocksdb_options_set_filter_policy(o.Opt, policy)
 }
 
 // SetMaxBackgroundCompactions sets the maximum number of concurrent
@@ -244,7 +244,7 @@ func (o *Options) SetTargetFileSizeBase(n uint64) {
 }
 
 func (o *Options) SetDisableSeekCompaction(b bool) {
-	C.rocksdb_options_set_disable_seek_compaction(o.Opt, boolToInt(b))
+	// C.rocksdb_options_set_disable_seek_compaction(o.Opt, boolToInt(b))
 }
 
 func (o *Options) SetDisableAutoCompactions(b bool) {
